@@ -10,7 +10,7 @@ import { API_URL } from "src/constants";
 
 const { Title, Text } = Typography;
 
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 const PostShow: React.FC<{ initialData: GetOneResponse<IPost> }> = ({
     initialData,

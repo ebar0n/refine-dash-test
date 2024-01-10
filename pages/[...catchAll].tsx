@@ -2,7 +2,7 @@ import { ErrorComponent } from "@refinedev/antd";
 import { GetServerSideProps } from "next";
 import { authProvider } from "src/authProvider";
 
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 export default function CatchAll() {
     return <ErrorComponent />;

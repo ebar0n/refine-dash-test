@@ -5,7 +5,7 @@ import { GetServerSideProps } from "next";
 import { authProvider } from "src/authProvider";
 import { IPost } from "src/interfaces";
 
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 const PostCreate: React.FC = () => {
     const { formProps, saveButtonProps } = useForm<IPost>();

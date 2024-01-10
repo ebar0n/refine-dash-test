@@ -8,7 +8,7 @@ import { authProvider } from "src/authProvider";
 import { API_URL } from "src/constants";
 import { IPost } from "src/interfaces";
 
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 const PostEdit: React.FC<{ initialData: GetOneResponse<IPost> }> = ({
     initialData,
