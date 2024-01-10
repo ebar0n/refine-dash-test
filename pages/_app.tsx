@@ -22,7 +22,7 @@ import dataProvider from "@refinedev/simple-rest";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { AppIcon } from "src/components/app-icon";
 
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 const API_URL = "https://api.fake-rest.refine.dev";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
