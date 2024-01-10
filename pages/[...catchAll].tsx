@@ -2,6 +2,8 @@ import { ErrorComponent } from "@refinedev/mui";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+export const runtime = 'edge';
+
 export default function CatchAll() {
   return <ErrorComponent />;
 }
