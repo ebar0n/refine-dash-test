@@ -15,6 +15,8 @@ import { authProvider } from "src/authProvider";
 import { IPost } from "src/interfaces";
 import { API_URL } from "src/constants";
 
+export const runtime = 'edge';
+
 const PostList: React.FC<{ initialData: GetListResponse<IPost> }> = ({
     initialData,
 }) => {

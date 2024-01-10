@@ -9,6 +9,8 @@ import { IUser } from "src/interfaces";
 import { authProvider } from "src/authProvider";
 import { API_URL } from "src/constants";
 
+export const runtime = 'edge';
+
 export const UserList: React.FC<{ initialData: GetListResponse<IUser> }> = ({
     initialData,
 }) => {
