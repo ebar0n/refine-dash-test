@@ -1,21 +1,27 @@
-import { ErrorComponent } from "@refinedev/mui";
+import { ErrorComponent } from "@refinedev/antd";
 import { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-export const runtime = 'experimental-edge';
+import { authProvider } from "src/authProvider";
 
 export default function CatchAll() {
-  return <ErrorComponent />;
+    return <ErrorComponent />;
 }
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-  ]);
+    const { authenticated, redirectTo } = await authProvider.check(context);
 
-  return {
-    props: {
-      ...translateProps,
-    },
-  };
+    if (!authenticated) {
+        return {
+            props: {},
+            redirect: {
+                destination: `${redirectTo}?to=${encodeURIComponent(
+                    context.req.url || "/",
+                )}`,
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: {},
+    };
 };

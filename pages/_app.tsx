@@ -1,123 +1,83 @@
-import { GitHubBanner, Refine } from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
-import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-import {
-  notificationProvider,
-  RefineSnackbarProvider,
-  ThemedLayoutV2,
-  ThemedTitleV2,
-} from "@refinedev/mui";
-import routerProvider, {
-  DocumentTitleHandler,
-  UnsavedChangesNotifier,
-} from "@refinedev/nextjs-router";
+import React from "react";
+import type { AppProps } from "next/app";
 import type { NextPage } from "next";
-import { AppProps } from "next/app";
 
-import { Header } from "@components/header";
-import { ColorModeContextProvider } from "@contexts";
-import CssBaseline from "@mui/material/CssBaseline";
-import GlobalStyles from "@mui/material/GlobalStyles";
+import { GitHubBanner, Refine } from "@refinedev/core";
+import {
+    ThemedLayoutV2,
+    useNotificationProvider,
+    RefineThemes,
+} from "@refinedev/antd";
 import dataProvider from "@refinedev/simple-rest";
-import { appWithTranslation, useTranslation } from "next-i18next";
-import { AppIcon } from "src/components/app-icon";
+import routerProvider, {
+    DocumentTitleHandler,
+    UnsavedChangesNotifier,
+} from "@refinedev/nextjs-router";
+import "@refinedev/antd/dist/reset.css";
 
-export const runtime = 'experimental-edge';
-const API_URL = "https://api.fake-rest.refine.dev";
+import { ConfigProvider, App as AntdApp } from "antd";
+import "@styles/global.css";
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  noLayout?: boolean;
+import { authProvider } from "src/authProvider";
+import { API_URL } from "../src/constants";
+
+export type ExtendedNextPage = NextPage & {
+    noLayout?: boolean;
 };
 
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
+type ExtendedAppProps = AppProps & {
+    Component: ExtendedNextPage;
 };
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
-  const renderComponent = () => {
-    if (Component.noLayout) {
-      return <Component {...pageProps} />;
-    }
+function MyApp({ Component, pageProps }: ExtendedAppProps): JSX.Element {
+    const renderComponent = () => {
+        if (Component.noLayout) {
+            return <Component {...pageProps} />;
+        }
+
+        return (
+            <ThemedLayoutV2>
+                <Component {...pageProps} />
+            </ThemedLayoutV2>
+        );
+    };
 
     return (
-      <ThemedLayoutV2
-        Header={() => <Header sticky />}
-        Title={({ collapsed }) => (
-          <ThemedTitleV2
-            collapsed={collapsed}
-            text="refine Project"
-            icon={<AppIcon />}
-          />
-        )}
-      >
-        <Component {...pageProps} />
-      </ThemedLayoutV2>
+        <>
+            <GitHubBanner />
+            <ConfigProvider theme={RefineThemes.Blue}>
+                <AntdApp>
+                    <Refine
+                        authProvider={authProvider}
+                        routerProvider={routerProvider}
+                        dataProvider={dataProvider(API_URL)}
+                        resources={[
+                            { name: "users", list: "/users" },
+                            {
+                                name: "posts",
+                                list: "/posts",
+                                create: "/posts/create",
+                                edit: "/posts/edit/:id",
+                                show: "/posts/show/:id",
+                                meta: {
+                                    canDelete: true,
+                                },
+                            },
+                        ]}
+                        options={{
+                            syncWithLocation: true,
+                            warnWhenUnsavedChanges: true,
+                        }}
+                        notificationProvider={useNotificationProvider}
+                    >
+                        {renderComponent()}
+                        <UnsavedChangesNotifier />
+                        <DocumentTitleHandler />
+                    </Refine>
+                </AntdApp>
+            </ConfigProvider>
+        </>
     );
-  };
-
-  const { t, i18n } = useTranslation();
-
-  const i18nProvider = {
-    translate: (key: string, params: object) => t(key, params),
-    changeLocale: (lang: string) => i18n.changeLanguage(lang),
-    getLocale: () => i18n.language,
-  };
-
-  return (
-    <>
-      <GitHubBanner />
-      <RefineKbarProvider>
-        <ColorModeContextProvider>
-          <CssBaseline />
-          <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
-          <RefineSnackbarProvider>
-            <DevtoolsProvider>
-              <Refine
-                routerProvider={routerProvider}
-                dataProvider={dataProvider(API_URL)}
-                notificationProvider={notificationProvider}
-                i18nProvider={i18nProvider}
-                resources={[
-                  {
-                    name: "blog_posts",
-                    list: "/blog-posts",
-                    create: "/blog-posts/create",
-                    edit: "/blog-posts/edit/:id",
-                    show: "/blog-posts/show/:id",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                  {
-                    name: "categories",
-                    list: "/categories",
-                    create: "/categories/create",
-                    edit: "/categories/edit/:id",
-                    show: "/categories/show/:id",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                ]}
-                options={{
-                  syncWithLocation: true,
-                  warnWhenUnsavedChanges: true,
-                  useNewQueryKeys: true,
-                  projectId: "qilkJo-Rh70Zv-ADFxp8",
-                }}
-              >
-                {renderComponent()}
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
-              </Refine>
-              <DevtoolsPanel />
-            </DevtoolsProvider>
-          </RefineSnackbarProvider>
-        </ColorModeContextProvider>
-      </RefineKbarProvider>
-    </>
-  );
 }
 
-export default appWithTranslation(MyApp);
+export default MyApp;

@@ -1,9 +1,10 @@
 import { NavigateToResource } from "@refinedev/nextjs-router";
+import { ExtendedNextPage } from "./_app";
 
-export const runtime = 'experimental-edge';
+const Home: ExtendedNextPage = () => {
+    return <NavigateToResource resource="posts" />;
+};
 
-export default function Home() {
-  return <NavigateToResource resource="blog_posts" />;
-}
+export default Home;
 
 Home.noLayout = true;
